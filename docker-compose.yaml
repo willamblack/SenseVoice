@@ -1,0 +1,26 @@
+name: sense
+
+services:
+  sensevoice:
+    container_name: sensevoice
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      MODELSCOPE_CACHE: /models
+      SENSEVOICE_DEVICE: ${SENSEVOICE_DEVICE:-auto}
+    volumes:
+      - sensevoice-models:/models
+    ports:
+      - "50000:50000"
+    restart: on-failure:5
+    logging:
+      options:
+        max-size: "5m"
+        max-file: "3"
+    # No GPU reservation. A default one makes `docker compose up` fail on
+    # hosts without the NVIDIA runtime, which is the CPU path from issue 339.
+    # GPU users should use `docker run --gpus all`.
+
+volumes:
+  sensevoice-models:
